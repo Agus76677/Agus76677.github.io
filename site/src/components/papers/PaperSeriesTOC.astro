@@ -1,0 +1,46 @@
+---
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  currentId: string
+  series: string
+  posts: CollectionEntry<'blog'>[]
+}
+
+const { currentId, series, posts } = Astro.props
+
+const seriesPosts = posts
+  .filter((post) => post.data.paperSeries === series)
+  .sort((a, b) => {
+    const batchA = a.data.paperBatch ?? Number.MAX_SAFE_INTEGER
+    const batchB = b.data.paperBatch ?? Number.MAX_SAFE_INTEGER
+    if (batchA !== batchB) return batchA - batchB
+    return a.data.publishDate.getTime() - b.data.publishDate.getTime()
+  })
+---
+
+{
+  seriesPosts.length > 0 && (
+    <section class='not-prose rounded-2xl border border-border p-4'>
+      <h3 class='text-xs uppercase tracking-widest text-muted-foreground'>{series} Paper Reading</h3>
+      <ul class='mt-2 flex flex-col gap-y-1'>
+        {seriesPosts.map((post) => {
+          const isCurrent = post.id === currentId
+          return (
+            <li
+              class:list={[
+                'relative ms-2 rounded-xl px-3 py-1.5 text-foreground/75 transition-all',
+                'before:absolute before:bottom-[10%] before:left-[-0.5rem] before:top-[10%] before:w-[2px] before:bg-input',
+                isCurrent ? 'bg-muted font-medium text-primary before:bg-primary' : 'hover:bg-muted/50'
+              ]}
+            >
+              <a class='flex-1 hover:text-foreground' href={`/blog/${post.id}`} data-astro-prefetch>
+                {post.data.paperBatch ? `Batch ${post.data.paperBatch}` : post.data.title}
+              </a>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}

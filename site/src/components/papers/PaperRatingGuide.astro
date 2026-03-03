@@ -1,0 +1,72 @@
+---
+interface Props {
+  levels?: Array<{ score: number; desc: string }>
+}
+
+const {
+  levels = [
+    { score: 5, desc: '必须精读。方法扎实，能直接指导实验或工程。' },
+    { score: 4, desc: '推荐阅读。贡献明确，适合迁移到当前课题。' },
+    { score: 3, desc: '可选阅读。有启发但复现或泛化价值一般。' },
+    { score: 2, desc: '快速浏览。信息密度不高或与方向相关性较弱。' },
+    { score: 1, desc: '不推荐。问题定义或实验支撑不足。' }
+  ]
+} = Astro.props
+---
+
+<section class='paper-rating-guide'>
+  <h2 id='rating-guide'>评分标准</h2>
+  <ul>
+    {
+      levels.map((item) => (
+        <li>
+          <span class='score'>{'★'.repeat(item.score)}{'☆'.repeat(5 - item.score)}</span>
+          <span class='text'>{item.desc}</span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .paper-rating-guide {
+    border: 1px solid hsl(var(--border));
+    border-radius: 1rem;
+    padding: 1rem 1.1rem;
+    background: linear-gradient(180deg, hsl(var(--muted) / 0.65), hsl(var(--background)));
+    margin-bottom: 1rem;
+  }
+
+  .paper-rating-guide h2 {
+    margin: 0 0 0.7rem;
+  }
+
+  .paper-rating-guide ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .paper-rating-guide li {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .paper-rating-guide .score {
+    color: hsl(var(--primary));
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (max-width: 640px) {
+    .paper-rating-guide li {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+</style>

@@ -1,0 +1,116 @@
+---
+import { Image } from 'astro:assets'
+
+import { PostPreview } from 'astro-pure/components/pages'
+import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { Button, Card, Icon, Label, Spoiler } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import Section from '@/components/home/Section.astro'
+import SkillLayout from '@/components/home/SkillLayout.astro'
+import avatar from '@/assets/avatar.webp'
+import config from '@/site-config'
+
+const languages = ['Python', 'C++', 'C', 'Shell']
+const ai_skills = ['Pytorch', 'Isaac Sim']
+
+const MAX_POSTS = 10
+const allPosts = await getBlogCollection()
+const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+---
+
+<PageLayout meta={{ title: 'Home' }} highlightColor='#659EB966'>
+  <main class='flex w-full flex-col items-center'>
+    <section class='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
+      <Image
+        src={avatar}
+        alt='profile'
+        class='h-28 w-auto rounded-full border p-1'
+        loading='eager'
+      />
+
+      <div class='flex flex-col items-center gap-y-4'>
+        <h1 class='text-3xl font-bold'>{config.author}</h1>
+        <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
+          <Label title='China'>
+            <Icon name='location' class='size-5' slot='icon' />
+          </Label>
+          <Label
+            title='Github'
+            as='a'
+            href='https://github.com/Axi404'
+            target='_blank'
+          >
+            <Icon name='github' class='size-5' slot='icon' />
+          </Label>
+          <Label title='Email' as='a' href='mailto:gaoning@pjlab.org.cn'>
+            <Icon name='email' class='size-5' slot='icon' />
+          </Label>
+          <Label title='Scholar' as='a' href='https://scholar.google.com/citations?user=W9mT0rcAAAAJ&hl=zh-CN'>
+            <Icon name='earth' class='size-5' slot='icon' />
+            </Label>
+        </div>
+      </div>
+
+      <!-- {/* Get template */}
+      <a
+        href='https://axi404.github.io/cv/'
+        target='_blank'
+        class='flex flex-row items-center gap-x-3 rounded-full border border-border bg-background px-4 py-2 text-sm shadow-sm transition-shadow hover:shadow-md'
+      >
+        <span class='relative flex items-center justify-center'>
+          <span
+            class='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
+          ></span>
+          <span class='size-2 rounded-full bg-green-400'></span>
+        </span>
+        <p class='font-medium text-muted-foreground'>Get Resume</p>
+      </a>
+    </section> -->
+
+    <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
+      <Section title='About'>
+        <p class='text-muted-foreground'>学生 / <Spoiler>可爱猫娘</Spoiler></p>
+        <p class='text-muted-foreground'>
+          我是一名来自西安交通大学的人工智能专业的在读生，是 22 级。我正在上海人工智能实验室（SHAILAB）的具身智能中心中进行科研实习，从事具身智能 manipulation 领域的研究。Feel free to contact me.
+        </p>
+        <Button title='More about me' class='w-fit self-end' href='/about' style='ahead' />
+      </Section>
+      {
+        allPostsByDate.length > 0 && (
+          <Section title='Posts'>
+            <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+              {allPostsByDate.map((p) => (
+                <li class='flex flex-col gap-x-2 sm:flex-row'>
+                  <PostPreview post={p} />
+                </li>
+              ))}
+            </ul>
+            <Button title='More posts' class='w-fit self-end' href='/blog' style='ahead' />
+          </Section>
+        )
+      }
+      <Section title='Education'>
+        <Card
+          as='a'
+          heading='上海人工智能实验室'
+          subheading='具身智能中心，实习生'
+          date='Jul 2024 - Present'
+          href='https://www.shlab.org.cn/'
+        >
+        </Card>
+        <Card
+          as='a'
+          heading='西安交通大学'
+          subheading='人工智能专业，本科'
+          date='Sep 2022 - Present'
+          href='http://www.aiar.xjtu.edu.cn/'
+        >
+        </Card>
+      </Section>
+      <Section title='Skills'>
+        <SkillLayout title='Languages' skills={languages} />
+        <SkillLayout title='AI Skills' skills={ai_skills} />
+      </Section>
+    </div>
+  </main>
+</PageLayout>

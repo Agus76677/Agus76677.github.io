@@ -1,0 +1,37 @@
+---
+import { PostPreview } from 'astro-pure/components/pages'
+import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { Button } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
+
+const posts = sortMDByDate(await getBlogCollection()).filter((post) => post.data.tags.includes('research'))
+
+const meta = {
+  title: 'Research',
+  description: 'Paper reading notes and research logs.'
+}
+---
+
+<PageLayout {meta}>
+  <Button title='Back' href='/blog' style='back' />
+  <main class='mt-6 lg:mt-10'>
+    <div class='animate'>
+      <h1 class='mb-6 mt-6 text-3xl font-medium sm:mt-10'>Research</h1>
+      <p class='mb-6 text-muted-foreground'>Posts tagged with `research`.</p>
+    </div>
+
+    {
+      posts.length === 0 ? (
+        <p>No research posts yet. Create one from `templates/research-template.md`.</p>
+      ) : (
+        <ul class='flex flex-col gap-y-4 text-start'>
+          {posts.map((post) => (
+            <PostPreview {post} detailed />
+          ))}
+        </ul>
+      )
+    }
+  </main>
+</PageLayout>

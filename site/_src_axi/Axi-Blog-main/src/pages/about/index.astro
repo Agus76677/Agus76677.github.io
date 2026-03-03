@@ -1,0 +1,45 @@
+---
+import { Comment } from 'astro-pure/advanced'
+import { Button, Spoiler } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+import Substats from '@/components/about/Substats.astro'
+
+const headings = [
+  { depth: 2, slug: 'social-networks', text: 'Social Networks' },
+]
+---
+
+<PageLayout title='About' {headings} info='/about'>
+  <p>学生 / <Spoiler>可爱猫娘</Spoiler></p>
+  <p>
+    我是一名来自西安交通大学的人工智能专业的在读生，是 22 级。我正在上海人工智能实验室（SHAILAB）的具身智能中心中进行科研实习，从事具身智能 manipulation 领域的研究。
+  </p>
+  <Button title='Sponsor Me' class='w-fit' href='/projects#sponsorship' style='ahead' />
+
+  {/* social-networks */}
+  <h2 id='social-networks'>Social Networks</h2>
+  <p>
+    这是我的一些社交网络信息。
+  </p>
+  <Substats
+    stats={[
+      {
+        platform: 'GitHub',
+        icon: 'github',
+        link: 'https://github.com/Axi404',
+        text: 'followers',
+        api: 'github/Axi404'
+      },
+      {
+        platform: 'Steam',
+        icon: 'steam',
+        color: '#50769d',
+        link: 'https://steamcommunity.com/profiles/76561198854248190',
+        text: 'games',
+        api: 'steamgames/76561198854248190'
+      }
+    ]}
+  />
+  <Comment slot='bottom' />
+</PageLayout>
+
