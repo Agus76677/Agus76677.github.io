@@ -28,7 +28,13 @@
 - 论文阅读：`site/src/content/blog/user/paper-reading-*/index.mdx`
 - 每日笔记：`site/src/content/blog/user/daily-YYYY-MM-DD/index.md`
 
-## 4. 论文页面的强约束（重要）
+## 4. MDX 编辑模式（非常重要）
+
+- 编辑论文 `.mdx` 时，只使用 `Raw Markdown` 模式。
+- 不要在编辑中途切回可视化模式，否则 Sitepins 可能吞掉 `</PaperCard>`。
+- 如果你切换过模式，发布前必须检查每个 `PaperCard` 是否成对闭合。
+
+## 5. 论文页面的强约束（重要）
 
 `PaperCard` 必须用标准写法：
 
@@ -46,7 +52,7 @@
 <PaperCard 1 2307 15818 score="4" ...>
 ```
 
-## 5. 图片插入方式
+## 6. 图片插入方式
 
 1. 先上传图片到 `site/public/images`
 2. 在 MDX 正文或 `PaperCard` 内写：
@@ -55,7 +61,7 @@
 <img src='/images/your-image.png' alt='figure' class='zoomable rounded-xl border border-border my-3' />
 ```
 
-## 6. 提交后上线
+## 7. 提交后上线
 
 Sitepins 每次保存会提交到 `main`，GitHub Actions 会自动部署。
 等 Actions 变绿后刷新网站即可。
