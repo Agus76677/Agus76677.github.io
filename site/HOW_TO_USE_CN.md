@@ -1,36 +1,57 @@
-# 个人博客使用说明（论文阅读 / 每日笔记 / 项目）
+﻿# 个人博客使用说明（论文阅读 / 每日笔记 / 项目）
 
 ## 1. 本地启动
 
 ```powershell
 cd C:\blog\site
-npm install
-npm run dev
+npm.cmd install
+npm.cmd run dev
 ```
 
-浏览器打开 `http://localhost:4321`
+浏览器打开 `http://localhost:4321`。
 
-## 2. 新增论文阅读记录
+## 2. 论文阅读（统一使用 MDX + PaperCard）
 
-1. 新建目录：`src/content/blog/user/<你的slug>/`
-2. 复制 `templates/research-template.md` 到 `src/content/blog/user/<你的slug>/index.md`
-3. 修改 frontmatter：
-   - `title`
-   - `description`
-   - `publishDate`
-   - `tags` 里必须包含 `research`
-4. 填写正文
+### 推荐流程
+
+1. 新建目录：`src/content/blog/user/paper-reading-你的slug/`
+2. 复制模板：`templates/paper-reading-template.mdx` 到 `src/content/blog/user/paper-reading-你的slug/index.mdx`
+3. 如果有封面图，放到同目录并在 frontmatter 填 `heroImage.src`
+4. 填写 frontmatter 与正文后保存
 
 发布后会自动出现在：
 - `/blog`
 - `/blog/research`
 
+### PaperCard 标准写法
+
+```mdx
+<PaperCard
+  title='论文标题'
+  arxiv='2307.15818'
+  score={4}
+  tldr='一句话总结'
+>
+  - 核心方法：...
+  - 价值：...
+  - 局限：...
+</PaperCard>
+```
+
+### 在 PaperCard 中插入图片
+
+```mdx
+<img src='/images/your-figure.png' alt='figure' class='zoomable rounded-xl border border-border my-3' />
+```
+
+图片文件放在：`site/public/images/`。
+
 ## 3. 新增每日笔记
 
 1. 新建目录：`src/content/blog/user/daily-YYYY-MM-DD/`
-2. 复制 `templates/daily-template.md` 到 `src/content/blog/user/daily-YYYY-MM-DD/index.md`
+2. 复制模板：`templates/daily-template.md` 到 `src/content/blog/user/daily-YYYY-MM-DD/index.md`
 3. 修改 frontmatter，确保 `tags` 包含 `daily`
-4. 写当日内容
+4. 写正文
 
 发布后会自动出现在：
 - `/blog`
@@ -39,49 +60,35 @@ npm run dev
 ## 4. 新增项目
 
 1. 打开 `src/data/projects.ts`
-2. 按 `templates/project-template.ts` 的结构新增一个对象到 `projects` 数组
+2. 按 `templates/project-template.ts` 新增对象到 `projects` 数组
 3. 保存后访问 `/projects`
 
 ## 5. 构建与部署
 
 ```powershell
 cd C:\blog\site
-npm run build
+npm.cmd run build
 ```
 
-构建产物在 `dist/`，可直接部署到 Vercel / Netlify / GitHub Pages。
+GitHub Pages 已配置自动部署，推送到 `main` 后会自动更新网站。
 
-## 7. GitHub Pages 自动部署（推荐）
+## 6. 常见错误排查
 
-项目已内置工作流：`.github/workflows/deploy-github-pages.yml`。
+1. Actions 报 MDX 语法错误（Unexpected character...）
+- 通常是 `PaperCard` 标签被改坏。
+- 必须使用 `title/arxiv/score/tldr` 这套字段，不能写成 `<PaperCard 1 2307 ...>`。
 
-第一次上线：
+2. 图片不显示
+- 图片必须在 `site/public/images/`。
+- 正文里使用绝对路径：`/images/文件名.png`。
 
-1. 在 GitHub 新建空仓库（例如 `my-blog`）。
-2. 本地推送代码：
+3. Sitepins 编辑后构建失败
+- 优先在代码模式编辑 `.mdx`。
+- 不要删除 `import PaperCard ...` / `import PaperRatingGuide ...`。
 
-```powershell
-cd C:\blog\site
-git init
-git add .
-git commit -m "init blog"
-git branch -M main
-git remote add origin https://github.com/<你的用户名>/<你的仓库名>.git
-git push -u origin main
-```
+## 7. 你最常改的文件
 
-3. GitHub 仓库页面进入：
-   - `Settings` -> `Pages` -> `Build and deployment`
-   - Source 选择 `GitHub Actions`
-4. 回到 `Actions` 页面等待 `Deploy to GitHub Pages` 成功。
-5. 访问：
-   - 项目仓库：`https://<你的用户名>.github.io/<你的仓库名>/`
-   - 如果仓库名是 `<你的用户名>.github.io`：`https://<你的用户名>.github.io/`
-
-之后每次 `git push` 到 `main` 都会自动更新网站。
-
-## 6. 你最需要改的文件
-
-- 站点名称与导航：`src/site.config.ts`
-- 论文与日记内容：`src/content/blog/user/**/index.md`
+- 网站配置：`src/site.config.ts`
+- 论文文章：`src/content/blog/user/paper-reading-*/index.mdx`
+- 每日笔记：`src/content/blog/user/daily-*/index.md`
 - 项目列表：`src/data/projects.ts`

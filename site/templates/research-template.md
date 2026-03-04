@@ -1,25 +1,7 @@
----
-title: 'Research Notes: Topic Name'
-description: 'Short summary for this research note.'
-publishDate: 2026-03-03
-tags:
-  - research
-  - paper
----
+﻿# Research 模板说明
 
-# Topic
+论文阅读页面请使用 `paper-reading-template.mdx`，因为 `PaperCard` 组件只能在 `.mdx` 中使用。
 
-## Paper 1: Title
+路径：`site/templates/paper-reading-template.mdx`
 
-- Link:
-- Score: 4/5
-- Problem:
-- Method:
-- Why useful:
-- Limitations:
-
-## Paper 2: Title
-
-- Link:
-- Score:
-- Notes:
+如果你只是写普通文本研究日志（不需要卡片组件），可以继续用 `.md`。
