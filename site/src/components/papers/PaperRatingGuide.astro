@@ -5,22 +5,28 @@ interface Props {
 
 const {
   levels = [
-    { score: 5, desc: '必须精读。方法扎实，能直接指导实验或工程。' },
-    { score: 4, desc: '推荐阅读。贡献明确，适合迁移到当前课题。' },
-    { score: 3, desc: '可选阅读。有启发但复现或泛化价值一般。' },
-    { score: 2, desc: '快速浏览。信息密度不高或与方向相关性较弱。' },
-    { score: 1, desc: '不推荐。问题定义或实验支撑不足。' }
+    { score: 1, desc: '平平无奇的论文' },
+    { score: 2, desc: '正常的论文' },
+    { score: 3, desc: '广受认可或让我眼前一亮的论文' },
+    { score: 4, desc: '奠基性或我非常喜欢的论文' },
+    { score: 5, desc: '毋庸置疑的最棒论文' }
   ]
 } = Astro.props
 ---
 
 <section class='paper-rating-guide'>
-  <h2 id='rating-guide'>评分标准</h2>
+  <h2 id='rating-guide'>评分准则</h2>
   <ul>
     {
       levels.map((item) => (
         <li>
-          <span class='score'>{'★'.repeat(item.score)}{'☆'.repeat(5 - item.score)}</span>
+          <span class='score' aria-label={`score-${item.score}`}>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <span class:list={['star', index < item.score ? 'on' : 'off']}>
+                {index < item.score ? '★' : '☆'}
+              </span>
+            ))}
+          </span>
           <span class='text'>{item.desc}</span>
         </li>
       ))
@@ -30,15 +36,25 @@ const {
 
 <style>
   .paper-rating-guide {
-    border: 1px solid hsl(var(--border));
-    border-radius: 1rem;
-    padding: 1rem 1.1rem;
-    background: linear-gradient(180deg, hsl(var(--muted) / 0.65), hsl(var(--background)));
-    margin-bottom: 1rem;
+    border: 1px solid hsl(var(--border) / 0.95);
+    border-radius: 1.2rem;
+    padding: 1.2rem 1.25rem;
+    background:
+      linear-gradient(180deg, hsl(var(--muted) / 0.6), hsl(var(--background))),
+      radial-gradient(circle at 8% 0%, rgba(255, 208, 55, 0.14), transparent 40%);
+    margin-bottom: 1.2rem;
+    box-shadow: 0 10px 26px -22px rgba(0, 0, 0, 0.45);
   }
 
   .paper-rating-guide h2 {
-    margin: 0 0 0.7rem;
+    margin: 0 0 0.85rem;
+    display: inline-block;
+    font-size: 1.1rem;
+    padding: 0.18rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--background) / 0.85);
+    color: hsl(var(--muted-foreground));
   }
 
   .paper-rating-guide ul {
@@ -46,21 +62,36 @@ const {
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 0.55rem;
+    gap: 0.8rem;
   }
 
   .paper-rating-guide li {
     display: grid;
-    grid-template-columns: 9.5rem 1fr;
-    gap: 0.6rem;
+    grid-template-columns: 11rem 1fr;
+    gap: 0.8rem;
     align-items: center;
   }
 
   .paper-rating-guide .score {
-    color: hsl(var(--primary));
     font-weight: 700;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.01em;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    display: inline-flex;
+    gap: 0.1rem;
+    align-items: center;
+  }
+
+  .paper-rating-guide .star {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .paper-rating-guide .star.on {
+    color: #f4b400;
+  }
+
+  .paper-rating-guide .star.off {
+    color: hsl(var(--muted-foreground) / 0.35);
   }
 
   @media (max-width: 640px) {

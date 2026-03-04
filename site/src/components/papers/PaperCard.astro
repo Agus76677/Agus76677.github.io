@@ -14,11 +14,13 @@ const clampedScore = Math.max(1, Math.min(5, score))
   <header>
     <h3>{title}</h3>
     <div class='meta'>
-      <span class='stars'>{'★'.repeat(clampedScore)}{'☆'.repeat(5 - clampedScore)}</span>
       {arxiv && (
-        <a href={`https://arxiv.org/abs/${arxiv}`} target='_blank' rel='noreferrer noopener'>
-          arXiv: {arxiv}
-        </a>
+        <span class='arxiv-pill'>
+          <span class='label'>arXiv</span>
+          <a href={`https://arxiv.org/abs/${arxiv}`} target='_blank' rel='noreferrer noopener'>
+            {arxiv}
+          </a>
+        </span>
       )}
     </div>
   </header>
@@ -27,6 +29,11 @@ const clampedScore = Math.max(1, Math.min(5, score))
   <div class='content'>
     <slot />
   </div>
+
+  <footer class='recommend'>
+    <span class='text'>推荐指数：</span>
+    <span class='stars'>{'★'.repeat(clampedScore)}{'☆'.repeat(5 - clampedScore)}</span>
+  </footer>
 </article>
 
 <style>
@@ -62,8 +69,35 @@ const clampedScore = Math.max(1, Math.min(5, score))
     font-size: 0.9rem;
   }
 
+  .paper-card .arxiv-pill {
+    display: inline-flex;
+    border: 1px solid hsl(var(--border));
+    border-radius: 999px;
+    overflow: hidden;
+    background: hsl(var(--background));
+  }
+
+  .paper-card .arxiv-pill .label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    background: hsl(var(--primary-foreground));
+    color: hsl(var(--muted-foreground));
+    border-right: 1px solid hsl(var(--border));
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .paper-card .arxiv-pill a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.7rem;
+    text-decoration: none;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+
   .paper-card .stars {
-    color: hsl(var(--primary));
+    color: #f4b400;
     font-weight: 700;
     letter-spacing: 0.03em;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -78,5 +112,20 @@ const clampedScore = Math.max(1, Math.min(5, score))
   .paper-card .content :global(p) {
     margin-top: 0.55rem;
     margin-bottom: 0.55rem;
+  }
+
+  .paper-card .recommend {
+    margin-top: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 999px;
+    padding: 0.26rem 0.8rem;
+    background: hsl(var(--muted) / 0.8);
+  }
+
+  .paper-card .recommend .text {
+    color: hsl(var(--muted-foreground));
   }
 </style>

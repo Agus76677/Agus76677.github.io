@@ -53,5 +53,49 @@ const {
         ) !important;
       }
     </style>
+    <script is:inline>
+      // Fallback page-view counter for PageInfo when Waline is not configured.
+      ;(() => {
+        const run = async () => {
+          const viewNodes = Array.from(document.querySelectorAll('.waline-pageview-count'))
+          if (!viewNodes.length) return
+
+          const group = new Map()
+          for (const node of viewNodes) {
+            const path = node.getAttribute('data-path') || window.location.pathname
+            const key = path.replace(/[^\w/-]/g, '_')
+            if (!group.has(key)) group.set(key, [])
+            group.get(key).push(node)
+          }
+
+          for (const [key, nodes] of group.entries()) {
+            try {
+              const ns = 'agus76677_blog_views'
+              const url = `https://api.countapi.xyz/hit/${encodeURIComponent(ns)}/${encodeURIComponent(key)}`
+              const resp = await fetch(url, { method: 'GET', cache: 'no-store' })
+              const data = await resp.json()
+              const count = typeof data.value === 'number' ? data.value : 0
+              nodes.forEach((n) => (n.textContent = String(count)))
+            } catch {
+              nodes.forEach((n) => (n.textContent = '0'))
+            }
+          }
+
+          const commentNodes = Array.from(document.querySelectorAll('.waline-comment-count'))
+          for (const node of commentNodes) {
+            if (!node.textContent?.trim()) node.textContent = '0'
+          }
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', run, { once: true })
+        } else {
+          run()
+        }
+
+        // Re-run on Astro client-side navigation.
+        document.addEventListener('astro:page-load', run)
+      })()
+    </script>
   </body>
 </html>
