@@ -23,7 +23,7 @@ import PaperCard from '@/components/papers/PaperCard.astro'
 <PaperCard title='RT-1: Robotics Transformer for Real-World Control at Scale' arxiv='2212.06817' score={3} tldr='把视觉语言条件下的动作预测统一到 Transformer 框架，是后续 VLA 的早期里程碑。'>
   - 核心方法：图像+文本编码后做 token 融合，输出离散动作 token。
 
-  <img src='/images/Snipaste_2026-03-04_18-34-45.png' alt='RT-1 related architecture figure' class='zoomable rounded-xl border border-border my-3' />
+  ![RT-1 related architecture figure](/images/Snipaste_2026-03-04_18-34-45.png)
 
   图中展示了该类方案的硬件架构思路。通过增加流水深度，可以减少 MUX 电路规模，从而降低资源开销。
 

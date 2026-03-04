@@ -55,7 +55,15 @@
 ## 6. 图片插入方式
 
 1. 先上传图片到 `site/public/images`
-2. 在 MDX 正文或 `PaperCard` 内写：
+2. 在 MDX 正文或 `PaperCard` 内，优先写最简 Markdown：
+
+```mdx
+![图注](/images/your-image.png)
+```
+
+系统会自动加圆角、边框和放大效果。你不需要手写 `<img class=...>`。
+
+3. 如果要自定义样式，再使用 `<img ...>`：
 
 ```mdx
 <img src='/images/your-image.png' alt='figure' class='zoomable rounded-xl border border-border my-3' />

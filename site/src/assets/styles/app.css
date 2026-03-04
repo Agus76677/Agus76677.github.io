@@ -73,3 +73,10 @@
     @apply transition-colors hover:text-primary;
   }
 }
+
+@layer components {
+  .prose img[src^='/images/'] {
+    @apply my-3 rounded-xl border border-border;
+    cursor: zoom-in;
+  }
+}

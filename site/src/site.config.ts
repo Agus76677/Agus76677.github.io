@@ -69,7 +69,7 @@ export const integ: IntegrationUserConfig = {
   },
   mediumZoom: {
     enable: true,
-    selector: '.prose .zoomable',
+    selector: '.prose .zoomable, .prose img[src^="/images/"]',
     options: {
       className: 'zoomable'
     }

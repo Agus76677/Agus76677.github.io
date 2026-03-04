@@ -42,6 +42,16 @@ npm.cmd run dev
 
 ### 在 PaperCard 中插入图片
 
+推荐最省事写法（只要一行）：
+
+```mdx
+![图注](/images/your-figure.png)
+```
+
+系统会自动给这类图片加圆角、边框和点击放大。
+
+可选写法（完全自定义样式）：
+
 ```mdx
 <img src='/images/your-figure.png' alt='figure' class='zoomable rounded-xl border border-border my-3' />
 ```
