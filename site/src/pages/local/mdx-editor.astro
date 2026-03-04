@@ -1,0 +1,75 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import LocalMdxEditor from '@/components/editor/LocalMdxEditor'
+---
+
+<BaseLayout meta={{ title: 'Local MDX Editor', description: 'Local visual editor for MDX notes.' }}>
+  <main class='mx-auto max-w-5xl py-6'>
+    <h1 class='mb-2 text-2xl font-semibold sm:text-3xl'>Local MDX Editor</h1>
+    <p class='mb-4 text-muted-foreground'>
+      用于本地可视化编辑 `.mdx` 文件。建议流程：打开本地文件 -> 编辑 -> 导出 -> 覆盖到
+      `site/src/content/blog/user/.../index.mdx`。
+    </p>
+    <p class='mb-4 text-sm text-muted-foreground'>
+      图片请继续使用 `![](/images/xxx.png)`，并把图片放到 `site/public/images/`。
+    </p>
+    <LocalMdxEditor client:only='react' />
+  </main>
+</BaseLayout>
+
+<style>
+  :global(.editor-shell) {
+    border: 1px solid hsl(var(--border));
+    border-radius: 1rem;
+    padding: 0.9rem;
+    background: hsl(var(--background));
+  }
+
+  :global(.editor-actions) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-bottom: 0.75rem;
+  }
+
+  :global(.editor-actions button) {
+    border: 1px solid hsl(var(--border));
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    background: hsl(var(--muted));
+    color: hsl(var(--foreground));
+    font-size: 0.92rem;
+  }
+
+  :global(.editor-actions button:hover) {
+    background: hsl(var(--primary-foreground));
+  }
+
+  :global(.editor-file) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.55rem;
+  }
+
+  :global(.editor-file input) {
+    flex: 1;
+    min-width: 12rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.6rem;
+    padding: 0.35rem 0.6rem;
+    background: hsl(var(--background));
+  }
+
+  :global(.editor-status) {
+    margin: 0 0 0.7rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.9rem;
+  }
+
+  :global(.mdxeditor) {
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.85rem;
+    overflow: hidden;
+  }
+</style>

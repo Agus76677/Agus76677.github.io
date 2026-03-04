@@ -1,6 +1,7 @@
 // @ts-check
 
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
+import react from '@astrojs/react'
 // Integrations
 import AstroPureIntegration from 'astro-pure'
 import { defineConfig } from 'astro/config'
@@ -50,11 +51,12 @@ export default defineConfig({
   },
 
   integrations: [
+    react(),
     // astro-pure will automatically add sitemap, mdx & tailwind
     // sitemap(),
     // mdx(),
     // tailwind({ applyBaseStyles: false }),
-    AstroPureIntegration(config),
+    AstroPureIntegration(config)
     // (await import('@playform/compress')).default({
     //   SVG: false,
     //   Exclude: ['index.*.js']
