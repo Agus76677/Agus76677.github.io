@@ -49,7 +49,7 @@ const getMonthColumns = (year: number, month: number) => {
     columns.push(column)
   }
 
-  return columns
+  return columns.filter((column) => column.some(Boolean))
 }
 
 const ResearchStatusBoard = ({ year = new Date().getFullYear() }: { year?: number }) => {
@@ -111,12 +111,7 @@ const ResearchStatusBoard = ({ year = new Date().getFullYear() }: { year?: numbe
       className='mx-auto w-fit overflow-hidden rounded-[1.5rem] border px-3 py-3 shadow-sm sm:px-4 sm:py-4'
       style={{ backgroundColor: BOARD_BG, borderColor: BOARD_BORDER }}
     >
-      <div className='mb-3 flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between'>
-        <div className='space-y-1'>
-          <h2 className='text-lg font-semibold text-white sm:text-xl'>{year} 科研状态日历</h2>
-          <p className='text-xs text-slate-300 sm:text-sm'>点击某一天，再选择 1 到 5 档状态。数据仅保存在当前浏览器。</p>
-        </div>
-
+      <div className='mb-3 flex justify-end'>
         <div
           className='rounded-2xl border px-3 py-2 text-xs text-slate-100 shadow-inner xl:min-w-[320px]'
           style={{ borderColor: '#536274', backgroundColor: '#2a3441' }}
@@ -181,7 +176,7 @@ const ResearchStatusBoard = ({ year = new Date().getFullYear() }: { year?: numbe
                         return (
                           <div
                             key={`${month}-${columnIndex}-${rowIndex}`}
-                            className='h-4 w-4 rounded-md opacity-0 sm:h-5 sm:w-5'
+                            className='h-4 w-4 rounded-[3px] opacity-0 sm:h-5 sm:w-5'
                           />
                         )
                       }
@@ -200,7 +195,7 @@ const ResearchStatusBoard = ({ year = new Date().getFullYear() }: { year?: numbe
                           onClick={() => setSelectedDate(dateKey)}
                           disabled={isFuture}
                           title={dateKey}
-                          className='relative flex h-4 w-4 items-center justify-center rounded-md border text-[10px] transition hover:-translate-y-0.5 sm:h-5 sm:w-5 sm:text-[11px] disabled:cursor-not-allowed'
+                          className='relative flex h-4 w-4 items-center justify-center rounded-[3px] border text-[10px] transition hover:-translate-y-0.5 sm:h-5 sm:w-5 sm:text-[11px] disabled:cursor-not-allowed'
                           style={{
                             backgroundColor: isFuture ? FUTURE_BG : level?.color ?? EMPTY_BG,
                             borderColor: isSelected ? '#f8fbff' : level?.border ?? '#526172',
