@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 type RatingLevel = 0 | 1 | 2 | 3 | 4 | 5
 type RatingMap = Record<string, RatingLevel>
@@ -86,6 +86,7 @@ const buildYearGrid = (year: number) => {
 
 const ResearchStatusBoard = ({ year = new Date().getFullYear() }: { year?: number }) => {
   const [ratings, setRatings] = useState<RatingMap>({})
+  const hasLoadedRef = useRef(false)
   const today = useMemo(() => new Date(), [])
   const todayKey = useMemo(() => toDateKey(today), [today])
   const [selectedDate, setSelectedDate] = useState(todayKey)
@@ -93,14 +94,18 @@ const ResearchStatusBoard = ({ year = new Date().getFullYear() }: { year?: numbe
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(getStorageKey(year))
-      if (!raw) return
-      setRatings(JSON.parse(raw) as RatingMap)
+      if (raw) {
+        setRatings(JSON.parse(raw) as RatingMap)
+      }
     } catch {
       setRatings({})
+    } finally {
+      hasLoadedRef.current = true
     }
   }, [year])
 
   useEffect(() => {
+    if (!hasLoadedRef.current) return
     window.localStorage.setItem(getStorageKey(year), JSON.stringify(ratings))
   }, [ratings, year])
 
