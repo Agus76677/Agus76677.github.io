@@ -1,7 +1,8 @@
 param(
   [string]$Url = "http://127.0.0.1:4321/",
   [int]$StartupTimeoutSec = 90,
-  [string]$ChromePath = ""
+  [string]$ChromePath = "",
+  [string]$ProfileDir = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -55,7 +56,11 @@ if (-not (Test-Path $publishScript)) {
 }
 
 $chromeExe = Resolve-ChromePath -Preferred $ChromePath
-$profileDir = Join-Path $env:TEMP ("blog-preview-" + [guid]::NewGuid().ToString("N"))
+$profileDir = if (-not [string]::IsNullOrWhiteSpace($ProfileDir)) {
+  $ProfileDir
+} else {
+  Join-Path $env:LocalAppData "CodexBlogPreviewChrome"
+}
 New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
 
 $devProcess = $null
@@ -116,10 +121,8 @@ try {
     throw "Publish failed."
   }
 }
-finally {
-  if (Test-Path $profileDir) {
-    Remove-Item -Recurse -Force $profileDir -ErrorAction SilentlyContinue
-  }
+catch {
+  throw
 }
 
 Write-Host "Done."
