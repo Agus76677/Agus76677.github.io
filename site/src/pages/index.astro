@@ -5,6 +5,7 @@ import { PostPreview } from 'astro-pure/components/pages'
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import { Button, Card, Icon, Label, Spoiler } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import ResearchStatusBoard from '@/components/home/ResearchStatusBoard'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
 import avatar from '@/assets/avatar.webp'
@@ -74,6 +75,9 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
           我是一名来自西安交通大学的人工智能专业的在读生，是 22 级。我正在上海人工智能实验室（SHAILAB）的具身智能中心中进行科研实习，从事具身智能 manipulation 领域的研究。Feel free to contact me.
         </p>
         <Button title='More about me' class='w-fit self-end' href='/about' style='ahead' />
+      </Section>
+      <Section title='Research Status'>
+        <ResearchStatusBoard client:load />
       </Section>
       {
         allPostsByDate.length > 0 && (
