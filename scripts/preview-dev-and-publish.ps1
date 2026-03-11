@@ -47,12 +47,16 @@ function Stop-ProcessTree {
 $root = Split-Path -Parent $PSScriptRoot
 $siteDir = Join-Path $root "site"
 $publishScript = Join-Path $PSScriptRoot "publish.ps1"
+$statusServerScript = Join-Path $PSScriptRoot "research-status-server.mjs"
 
 if (-not (Test-Path $siteDir)) {
   throw "Missing directory: $siteDir"
 }
 if (-not (Test-Path $publishScript)) {
   throw "Missing script: $publishScript"
+}
+if (-not (Test-Path $statusServerScript)) {
+  throw "Missing script: $statusServerScript"
 }
 
 $chromeExe = Resolve-ChromePath -Preferred $ChromePath
@@ -64,9 +68,16 @@ $profileDir = if (-not [string]::IsNullOrWhiteSpace($ProfileDir)) {
 New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
 
 $devProcess = $null
+$statusServerProcess = $null
 $chromeProcess = $null
 
 try {
+  Write-Host "Starting research status save server..."
+  $statusServerProcess = Start-Process -FilePath "cmd.exe" `
+    -ArgumentList "/c", "node `"$statusServerScript`"" `
+    -WorkingDirectory $root `
+    -PassThru
+
   Write-Host "Starting local dev server..."
   $devProcess = Start-Process -FilePath "cmd.exe" `
     -ArgumentList "/c", "npm.cmd run dev" `
@@ -111,6 +122,10 @@ finally {
   if ($devProcess -and -not $devProcess.HasExited) {
     Write-Host "Stopping local dev server..."
     Stop-ProcessTree -ProcessId $devProcess.Id
+  }
+  if ($statusServerProcess -and -not $statusServerProcess.HasExited) {
+    Write-Host "Stopping research status save server..."
+    Stop-ProcessTree -ProcessId $statusServerProcess.Id
   }
 }
 

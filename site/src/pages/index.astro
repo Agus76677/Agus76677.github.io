@@ -8,11 +8,13 @@ import PageLayout from '@/layouts/BaseLayout.astro'
 import ResearchStatusBoard from '@/components/home/ResearchStatusBoard'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
+import researchStatus from '@/data/research-status.json'
 import avatar from '@/assets/avatar.webp'
 import config from '@/site-config'
 
 const languages = ['Python', 'C++', 'C', 'Shell']
 const ai_skills = ['Pytorch', 'Isaac Sim']
+const researchStatusSaveEndpoint = import.meta.env.DEV ? 'http://127.0.0.1:4322/research-status' : ''
 
 const MAX_POSTS = 10
 const allPosts = await getBlogCollection()
@@ -77,7 +79,11 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         <Button title='More about me' class='w-fit self-end' href='/about' style='ahead' />
       </Section>
       <div class='relative left-1/2 w-[min(96vw,1300px)] -translate-x-1/2 px-2'>
-        <ResearchStatusBoard client:load />
+        <ResearchStatusBoard
+          client:load
+          initialRatings={researchStatus}
+          saveEndpoint={researchStatusSaveEndpoint}
+        />
       </div>
       {
         allPostsByDate.length > 0 && (

@@ -4,6 +4,11 @@ type RatingLevel = 0 | 1 | 2 | 3 | 4 | 5
 type RatingMap = Record<string, RatingLevel>
 type DayCell = { date: Date | null; key: string }
 type MonthMarker = { label: string; weekIndex: number }
+type ResearchStatusBoardProps = {
+  year?: number
+  initialRatings?: RatingMap
+  saveEndpoint?: string
+}
 
 const BOARD_BG = '#313c4a'
 const BOARD_BORDER = '#425061'
@@ -46,6 +51,40 @@ const endOfWeek = (date: Date) => {
 
 const getStorageKey = (year: number) => `research-status-${year}`
 
+const normalizeRatings = (value: unknown, year: number): RatingMap => {
+  if (!value || typeof value !== 'object') {
+    return {}
+  }
+
+  const result: RatingMap = {}
+  for (const [key, rawLevel] of Object.entries(value as Record<string, unknown>)) {
+    if (!key.startsWith(`${year}-`)) {
+      continue
+    }
+    if (rawLevel === 1 || rawLevel === 2 || rawLevel === 3 || rawLevel === 4 || rawLevel === 5) {
+      result[key] = rawLevel
+    }
+  }
+
+  return result
+}
+
+const areRatingsEqual = (left: RatingMap, right: RatingMap) => {
+  const leftKeys = Object.keys(left)
+  const rightKeys = Object.keys(right)
+  if (leftKeys.length !== rightKeys.length) {
+    return false
+  }
+
+  for (const key of leftKeys) {
+    if (left[key] !== right[key]) {
+      return false
+    }
+  }
+
+  return true
+}
+
 const buildYearGrid = (year: number) => {
   const yearStart = new Date(year, 0, 1)
   const yearEnd = new Date(year, 11, 31)
@@ -84,30 +123,78 @@ const buildYearGrid = (year: number) => {
   return { weeks, monthMarkers }
 }
 
-const ResearchStatusBoard = ({ year = new Date().getFullYear() }: { year?: number }) => {
-  const [ratings, setRatings] = useState<RatingMap>({})
+const ResearchStatusBoard = ({
+  year = new Date().getFullYear(),
+  initialRatings = {},
+  saveEndpoint = ''
+}: ResearchStatusBoardProps) => {
+  const [ratings, setRatings] = useState<RatingMap>(() => normalizeRatings(initialRatings, year))
   const hasLoadedRef = useRef(false)
+  const lastSyncedRef = useRef<string>('')
   const today = useMemo(() => new Date(), [])
   const todayKey = useMemo(() => toDateKey(today), [today])
   const [selectedDate, setSelectedDate] = useState(todayKey)
 
   useEffect(() => {
+    const normalizedInitial = normalizeRatings(initialRatings, year)
     try {
       const raw = window.localStorage.getItem(getStorageKey(year))
       if (raw) {
-        setRatings(JSON.parse(raw) as RatingMap)
+        const localRatings = normalizeRatings(JSON.parse(raw), year)
+        const mergedRatings = { ...normalizedInitial, ...localRatings }
+        setRatings(mergedRatings)
+        lastSyncedRef.current = JSON.stringify(normalizedInitial)
+      } else {
+        setRatings(normalizedInitial)
+        lastSyncedRef.current = JSON.stringify(normalizedInitial)
       }
     } catch {
-      setRatings({})
+      setRatings(normalizedInitial)
+      lastSyncedRef.current = JSON.stringify(normalizedInitial)
     } finally {
       hasLoadedRef.current = true
     }
-  }, [year])
+  }, [initialRatings, year])
 
   useEffect(() => {
     if (!hasLoadedRef.current) return
     window.localStorage.setItem(getStorageKey(year), JSON.stringify(ratings))
   }, [ratings, year])
+
+  useEffect(() => {
+    if (!hasLoadedRef.current || !saveEndpoint) return
+
+    const payload = JSON.stringify(ratings)
+    if (payload === lastSyncedRef.current) {
+      return
+    }
+
+    const controller = new AbortController()
+    const syncRatings = async () => {
+      try {
+        const response = await fetch(saveEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          signal: controller.signal
+        })
+
+        if (!response.ok) {
+          throw new Error(`Failed to save research status: ${response.status}`)
+        }
+
+        lastSyncedRef.current = payload
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return
+        }
+        console.error(error)
+      }
+    }
+
+    void syncRatings()
+    return () => controller.abort()
+  }, [ratings, saveEndpoint])
 
   const selectedDateText = useMemo(() => {
     const date = parseDateKey(selectedDate)
