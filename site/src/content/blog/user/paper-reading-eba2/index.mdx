@@ -20,7 +20,7 @@ import PaperCard from '@/components/papers/PaperCard.astro'
 
 ## OpenVLA
 
-<PaperCard title='OpenVLA: An Open-Source Vision-Language-Action Model' arxiv='2406.09246' score={4} tldr='开源可复现的 VLA 基线，适合搭建你自己的实验流水线。'>
+<PaperCard title='OpenVLA: An Open-Source Vision-Language-Action Model' arxiv='2406.09246' readingMode='deep' score={4} tldr='开源可复现的 VLA 基线，适合搭建你自己的实验流水线。'>
   - 方法：基于视觉-语言 backbone，动作以 token 形式自回归生成。
   - 为什么值得看：工程栈公开、复现实验门槛低，便于做对比实验。
   - 我的结论：适合作为个人课题中的“第一版可运行基线”。
@@ -28,7 +28,7 @@ import PaperCard from '@/components/papers/PaperCard.astro'
 
 ## π0 (Pi-Zero)
 
-<PaperCard title='π0: A Vision-Language-Action Flow Model for General Robot Control' score={5} tldr='将动作建模为 flow matching 形式，兼顾多任务能力和执行质量。'>
+<PaperCard title='π0: A Vision-Language-Action Flow Model for General Robot Control' readingMode='skim' score={5} tldr='将动作建模为 flow matching 形式，兼顾多任务能力和执行质量。'>
   - 关键点：不是纯 next-token 预测，而是通过 flow 轨迹学习动作分布。
   - 优势：在复杂控制任务上更稳，跨任务泛化潜力更高。
   - 个人评分理由：论文完整度高，方法与实验都具备迁移价值。

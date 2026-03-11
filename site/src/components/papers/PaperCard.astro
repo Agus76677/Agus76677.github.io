@@ -4,10 +4,16 @@ interface Props {
   arxiv?: string
   score: number
   tldr: string
+  readingMode?: 'deep' | 'skim'
 }
 
-const { title, arxiv, score, tldr } = Astro.props
+const { title, arxiv, score, tldr, readingMode } = Astro.props
 const clampedScore = Math.max(1, Math.min(5, score))
+const readingModeMap = {
+  deep: { label: '精读', className: 'reading-pill deep' },
+  skim: { label: '速读', className: 'reading-pill skim' }
+} as const
+const readingMeta = readingMode ? readingModeMap[readingMode] : null
 ---
 
 <article class='paper-card'>
@@ -20,6 +26,12 @@ const clampedScore = Math.max(1, Math.min(5, score))
           <a href={`https://arxiv.org/abs/${arxiv}`} target='_blank' rel='noreferrer noopener'>
             {arxiv}
           </a>
+        </span>
+      )}
+      {readingMeta && (
+        <span class={readingMeta.className}>
+          <span class='mark'>※</span>
+          <span>{readingMeta.label}</span>
         </span>
       )}
     </div>
@@ -105,6 +117,35 @@ const clampedScore = Math.max(1, Math.min(5, score))
     padding: 0.2rem 0.7rem;
     text-decoration: none;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+
+  .paper-card .reading-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 999px;
+    padding: 0.22rem 0.72rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .paper-card .reading-pill .mark {
+    font-size: 0.95em;
+    line-height: 1;
+  }
+
+  .paper-card .reading-pill.deep {
+    border-color: color-mix(in srgb, #a855f7 28%, hsl(var(--border)));
+    background: color-mix(in srgb, #a855f7 10%, hsl(var(--background)));
+    color: #7e22ce;
+  }
+
+  .paper-card .reading-pill.skim {
+    border-color: color-mix(in srgb, #94a3b8 34%, hsl(var(--border)));
+    background: color-mix(in srgb, #94a3b8 14%, hsl(var(--background)));
+    color: #64748b;
   }
 
   .paper-card .stars {
