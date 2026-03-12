@@ -48,13 +48,28 @@ tldr='Mu等人在23年的工作：针对二维 PE 阵列，扩充无冲突映射
 <PaperCard title='High-Speed NTT Accelerator for CRYSTAL-Kyber and CRYSTAL-Dilithium' 
  readingMode='skim'
  score={4} 
- tldr='Trong-Hung Nguyen在24年的文章。主要贡献是将高位宽DSP分解为4个小位宽DSP(23*23→4*12*12)'>
+ tldr='c在24年的文章。主要贡献是将高位宽DSP分解为4个小位宽DSP(23*23→4*12*12)'>
 是Mu文章的延续。
 突出的贡献为将23*23的乘法器，分解为4个12*12的小型乘法器，并利用2^23等价2^12-1 mod q 特性实现折叠。在加法层面采用的是CSA。此外，统一了NTT和INTT结构，使得RU利用率从50%上升到100%。不过后面这个点显然是个幌子。以及实现了基2和基4的实现。核心图片为fig2.展示了其怎么实现Dilithium模数下的DSP分解。
 
 ![](/images/Snipaste_2026-03-11_19-46-44.png)
 分解为四个小乘法。其中因为aH*bH天然具有2^23权重，因此作者利用2^23等价2^13-1 mod q ，将高位乘积折回较低位域。因此得到PM,PL,PH三部分。该部分与figrue1的部分积归并相关，建议回头仔细阅读。后续又进行了以此K-RED尾部约减。总体来说位分裂乘法+CSA归并+模数性质折叠+K-RED。
 总体来说，大体知道了怎么一回事。但是具体原理还是需要仔细阅读。
+</PaperCard>
+
+## TCO-NTT
+<PaperCard title='A Timing-Constrained Design Methodology for Radix- 2<sup> <i>k</i> </sup> NTT in Polynomial Arithmetic' 
+ readingMode='skim'
+ score={4} 
+ tldr='Trong-Hung Nguyen的trans文章。用时间调度替代 memory permutation'>
+之前的NTT输出系数调度策略多为BFU出之后，存储到对应的bank中，要再次从bank中到BFU，需要采用permutation进行重排。而TCM-NTT（或成为TCO-NTT），则在TCM结构中，用memory写入顺序提前完成重排，在下一阶段BFU需要时直接读出数据，简单而言，就是用时间调度解决了空间重排问题。重排开销被塞进了目标时序约束框架中~
+此外，通过sub NTT策略，实现了任意并行度和任意radix的支持。TCM同样支持任意并行度下的NTT设计。
+对于核心fig3进行讲解：
+![](/images/Snipaste_2026-03-12_10-35-54.png)
+该图片是对于整体TCM架构机制的形象阐述。描述了我开头的数据是经过CD1~3X进行一个初步延迟，如果是在某些并行度和radix下，那么还需要Carry-over index进行跨stage的对齐，NTT-Reordering则是真正进行数据重排的结构，原理就是多路选择器！最后的offset time结构则是对整体进行一个对齐，确保到BFU单元具有一个统一的时延。
+TCM的输入来自BFU的输出数据流，其输出则是送往下一stageBFU的输入数据流。并非完全没有存储开销，还是要存储一个多项式，但是也就仅仅只有这么一份开销了。
+可见，经由TCM之后，数据自然而然完成了重新排列这个操作，不需要付出昂贵的mux以及bank代价，只需要付出少量的硬件开销以及时序约束为代价。
+
 </PaperCard>
 
 ## CFNTT
