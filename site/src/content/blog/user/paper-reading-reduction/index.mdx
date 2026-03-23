@@ -1,0 +1,69 @@
+---
+title: 'Paper Reading: Reduction 1'
+description: '从零开始的 Reduction 模约简 研究生活，第一批论文速记。'
+publishDate: 2026-03-23T00:00:00.000Z
+heroImage:
+  src: ./thumbnail.webp
+  color: "#8C8275"
+tags:
+  - research
+  - paper reading
+  - reduction
+  - modular
+paperSeries: 'Reduction'
+paperBatch: 1
+---
+import PaperRatingGuide from '@/components/papers/PaperRatingGuide.astro'
+import PaperCard from '@/components/papers/PaperCard.astro'
+
+<PaperRatingGuide/>
+
+
+
+## EF-PB-AM
+<PaperCard title='Energy-Efficient Approximate Multiplier Design With Lesser Error Rate Using the Probability-Based Approximate 4:2 Compressor' 
+ readingMode='deep'
+ score={4} 
+ tldr='跟着Guo的文章在connectedpaper上找的，是一个核心聚集地。采用权重思想对输入状态进行等价压缩，再只对低概率规范状态做近似，最终得到(4,2)近似乘法器。  '>
+是一篇近似压缩器的文章，用来了解下主modular分支之外的约减也是不错的。小白适合阅读的文章！
+
+所谓的权重等价，就是按照1的个数将16种输入状态等价为6种，其中2占了两种。这部分的硬件结构对应叫做重排序电路，实际上就是8个门组成的电路，搭建原理就是真值表。  
+所谓的低概率规范状态做近似，就是专门调了1100+1111/1110+1111两种情况做了两种design，按照1的个数越多，错误概率越小进行挑选的。最后得到了错误概率虽然不是最小的，但是最节能的设计方案。  
+接下来对表4，5，6，图1进行讲解  
+![](/images/Snipaste_2026-03-23_10-53-26.png)
+
+表4就是重排序电路的真值表，图1就是根据真值表得到的电路。  
+表5就是对表4继续进行了统计，值得注意的是times指标，这是以前的旧方法喜欢用的指标，实际上作者用的是概率，而非简单的次数。  
+表6则是考虑了表3后，进一步得出的两种设计方案。值得讲解的是，这里的Ca，和Sum是特定的，也就是经过精挑细选的，并且由此可总结一张真值表，用于完成Y0123→Cay/Sum的映射，得到的映射公式如(1)(2)所示，见下图。  
+![](/images/Snipaste_2026-03-23_14-57-19.png)
+所以我们现在有了ABCD→Y0123的映射，又有了Y0123到Carry/Sum的映射，所以构建的电路如下，就是按照两套映射走的。  
+![](/images/Snipaste_2026-03-23_14-58-04.png)
+继续的，我们讲解一下fig4，虽然说fig1是整篇文章的最突出的创新点，但是对于新手而言，fig4包含了重要的信息。  
+![](/images/Snipaste_2026-03-23_14-59-12.png)
+
+首先分为了上下三层，从上到下依次为：原始的8*8部分积展开，深8行，有15列；经过一次处理的部分积，可见深度已经变浅了许多；处理完成的两行部分积，只需要用一个普通的加法器就可以得到最终的乘法结果。那么为什么要采用reduction tree结构呢？因为乘法器里最麻烦的不是生成部分积，而是：某些列里 bit 太多了，不能直接一次加完。因此最佳的做法就是先进行压缩，只剩两行时用普通的加法器做最终结果。需要注意的是，用到的三种部件都会对高位列产生影响，也就是作用完成之后本列增加一个点，隔壁列也会增加一个点。  
+
+讲解到这里差不多就结束了，算是比较充分的理解了一下近似压缩是怎么一回事，不过咱们要做的是比特模，而不是这个。  
+顺便把table1也讲解一下。  
+![](/images/Snipaste_2026-03-23_15-42-35.png)
+
+
+值得借鉴的经验就是利用对称性，非对称性，减少无效翻转和路由复杂度。  
+其实你现在做的电路的一个明显可以优化的地方就是对于路由网络进行剪枝，他现在的有效翻转状态实在是太少了！  
+这篇paper有讲解视频：https://ieeexplore.ieee.org/document/10136817  
+
+</PaperCard>
+
+
+<PaperCard 
+title='' 
+readingMode='deep'
+score={5} 
+tldr=''>
+* 核心方法：
+
+![]()
+
+</PaperCard>
+
+​
