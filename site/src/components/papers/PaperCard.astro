@@ -1,13 +1,14 @@
----
+﻿---
 interface Props {
   title: string
   arxiv?: string
   score: number
   tldr: string
   readingMode?: 'deep' | 'skim'
+  readdate?: string
 }
 
-const { title, arxiv, score, tldr, readingMode } = Astro.props
+const { title, arxiv, score, tldr, readingMode, readdate } = Astro.props
 const clampedScore = Math.max(1, Math.min(5, score))
 const readingModeMap = {
   deep: { label: '精读', className: 'reading-pill deep' },
@@ -34,6 +35,12 @@ const readingMeta = readingMode ? readingModeMap[readingMode] : null
           <span>{readingMeta.label}</span>
         </span>
       )}
+      {readdate && (
+        <span class='date-pill'>
+          <span class='label'>记录于</span>
+          <span>{readdate}</span>
+        </span>
+      )}
     </div>
   </header>
 
@@ -55,7 +62,7 @@ const readingMeta = readingMode ? readingModeMap[readingMode] : null
 
   <footer class='recommend'>
     <span class='text'>推荐指数：</span>
-    <span class='stars'>{'★'.repeat(clampedScore)}{'☆'.repeat(5 - clampedScore)}</span>
+    <span class='stars'>{'☆'.repeat(clampedScore)}{'☆'.repeat(5 - clampedScore)}</span>
   </footer>
 </article>
 
@@ -116,7 +123,7 @@ const readingMeta = readingMode ? readingModeMap[readingMode] : null
     align-items: center;
     padding: 0.2rem 0.7rem;
     text-decoration: none;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   }
 
   .paper-card .reading-pill {
@@ -148,11 +155,40 @@ const readingMeta = readingMode ? readingModeMap[readingMode] : null
     color: #64748b;
   }
 
+  .paper-card .date-pill {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid hsl(var(--border));
+    border-radius: 999px;
+    overflow: hidden;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground) / 0.8);
+  }
+
+  .paper-card .date-pill .label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    background: hsl(var(--muted) / 0.9);
+    color: hsl(var(--muted-foreground));
+    border-right: 1px solid hsl(var(--border));
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .paper-card .date-pill span:last-child {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
   .paper-card .stars {
     color: #f4b400;
     font-weight: 700;
     letter-spacing: 0.03em;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   }
 
   .paper-card .tldr {
